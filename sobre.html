@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre | Luciano Ribeiro</title>
+    <style>
+        :root {
+            --accent-color: #00d4ff;
+            --bg-dark: #050505;
+            --card-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg-dark);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Fundo com linhas de grade sutis */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(0, 212, 255, 0.05) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0, 212, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 800px;
+            padding: 40px;
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            border-left: 5px solid var(--accent-color);
+            padding-left: 20px;
+            margin-bottom: 30px;
+        }
+
+        p {
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .skill-tag {
+            padding: 8px 15px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--accent-color);
+            border-radius: 5px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--accent-color);
+        }
+
+        .btn-voltar {
+            display: inline-block;
+            margin-top: 40px;
+            text-decoration: none;
+            color: white;
+            border: 1px solid white;
+            padding: 10px 25px;
+            transition: 0.3s;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+
+        .btn-voltar:hover {
+            background: white;
+            color: black;
+        }
+
+        .highlight { color: var(--accent-color); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Sobre Mim</h1>
+        
+        <p>Olá, eu sou <span class="highlight">Luciano Perciani Ribeiro</span>.</p>
+        
+        <p>Sou um desenvolvedor apaixonado por criar experiências digitais interativas que desafiam o convencional. Meu foco atual está no desenvolvimento de aplicações que unem <span class="highlight">Designer</span> e funcionalidade prática.</p>
+
+        <p>Recentemente, tenho me dedicado ao <span class="highlight">"Projeto de Sites e Sistemas"</span>, uma iniciativa que busca transformar a forma como interagimos com convites e eventos digitais, utilizando mecânicas de jogos e interfaces imersivas para engajar o usuário desde o primeiro clique.</p>
+
+        <h3>Stack Tecnológica:</h3>
+        <div class="skills">
+            <span class="skill-tag">HTML5 / CSS3</span>
+            <span class="skill-tag">JavaScript (ES6+)</span>
+            <span class="skill-tag">UX/UI Design</span>
+            <span class="skill-tag">Game Logic</span>
+            <span class="skill-tag">Responsive Web Design</span>
+        </div>
+
+        <a href="index.html" class="btn-voltar">Voltar ao Cubo</a>
+    </div>
+
+</body>
+</html>

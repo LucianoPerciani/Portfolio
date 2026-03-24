@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo do Avião - Projeto Convite</title>
+    <style>
+body { margin: 0; height: 100vh; overflow: hidden; font-family: sans-serif; background: #39C517; display: flex; flex-direction: column; }
+.campo { position: relative; width: 100%; height: 80vh; background-image: url('assets/cidade.jpeg'); background-size: cover; animation: rolarFundo 30s linear infinite; overflow: hidden; border-bottom: 4px solid #000; }
+
+@keyframes rolarFundo { from { background-position: 0 0; } to { background-position: 0 1000px; } }
+.campo-pausado { animation-play-state: paused !important; }
+
+/* Troca de Fundos */
+.fase-bg-2 { background-image: url('assets/espaco2.jpeg') !important; }
+.fase-bg-3 { background-image: url('assets/espaco3.jpeg') !important; }
+.fase-bg-4 { background-image: url('assets/espaco4.jpeg') !important; }
+
+#nave { position: absolute; bottom: 30px; left: 50%; width: 80px; height: 80px; transform: translateX(-50%); background: url('assets/nave.jpeg') no-repeat center/contain; transition: transform 0.2s; z-index: 10; }
+.inclinado-esq { transform: translateX(-50%) rotate(-15deg) !important; }
+.inclinado-dir { transform: translateX(-50%) rotate(15deg) !important; }
+
+.modal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 30px; text-align: center; border-radius: 20px; color: white; z-index: 100; width: 80%; max-width: 400px; background: rgba(0,0,0,0.9); border: 4px solid #39C517; }
+#telaVitoria { border-color: #FFD700; box-shadow: 0 0 20px #FFD700; }
+
+/* OBJETOS - Fundo removido para transparência */
+.obs { position: absolute; width: 45px; height: 45px; background-size: contain; background-repeat: no-repeat; background-color: transparent; }
+.missil { background-image: url('assets/missel.jpeg'); }
+.ponto-positivo { background-image: url('assets/moeda.jpeg'); border-radius: 50%; }
+.tiro { position: absolute; width: 4px; height: 15px; background: #0F0; box-shadow: 0 0 10px #0F0; }
+
+.controles { height: 20vh; display: flex; justify-content: space-around; align-items: center; background: #222; }
+.painel { color: #FFF; background: #000; padding: 5px 10px; border: 1px solid #39C517; margin: 2px; border-radius: 5px; min-width: 120px; text-align: center; }
+button { padding: 10px 20px; cursor: pointer; border-radius: 10px; border: none; font-weight: bold; }
+
+.flash-fase {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 50;
+    pointer-events: none;
+    animation: flashEffect 0.5s ease-out;
+}
+
+@keyframes flashEffect {
+    0% { background-color: rgba(255, 255, 255, 0.9); }
+    100% { background-color: rgba(255, 255, 255, 0); }
+}
+
+.btn-home-floating {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid #00d4ff;
+    color: #00d4ff;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.8rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    z-index: 9999;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+    backdrop-filter: blur(5px);
+}
+
+.btn-home-floating:hover {
+    background: #00d4ff;
+    color: #000;
+    box-shadow: 0 0 25px #00d4ff;
+    transform: scale(1.05);
+}
+
+@media (max-width: 600px) {
+    .btn-home-floating .text { display: none; }
+    .btn-home-floating { padding: 12px; bottom: 15px; right: 15px; }
+}
+    </style>
+</head>
+<body>
+
+    <div class="campo">
+        <div id="nave"></div>
+        
+        <div id="telaGameOver" class="modal" style="display: none;">
+            <h1>FIM DE JOGO!</h1>
+            <p>Seus pontos ficaram negativos.</p>
+            <button onclick="reiniciarJogo()"><h4>RECOMEÇAR</h4></button>
+        </div>
+
+        <div id="telaVitoria" class="modal" style="display: none;">
+            <h1 style="color: #FFD700; font-size: 35px;">🏆 MISSÃO CUMPRIDA! 🏆</h1>
+            <p>Você provou ser um piloto de elite!</p>
+            <div class="dados-vitoria">
+                <p>⭐ <strong>Tempo:</strong> <span id="tempoFinal">00:00</span></p>
+                <p>📍 Local: Sua Base Secreta</p>
+                <p>📅 Data: 2026</p>
+            </div>
+            <p>Prepare-se para o <strong>Projeto Convite</strong>!</p>
+            <button onclick="reiniciarJogo()" style="background: #FFD700; color: #000;"><h4>REDECOLAR</h4></button>
+        </div>
+
+        <div id="telaInicio" class="modal">
+            <h1>2026</h1>
+            <p>Desvie dos mísseis e colete moedas!</p>
+            <button onclick="começarJogo()"><h4>DECOLAR!</h4></button>
+        </div>
+    </div>
+
+    <div class="controles">
+        <button class="btn-controle" id="btnEsq">⬅️</button>
+        <div class="info-jogo">
+            <div class="painel">PONTOS: <span id="placar">0</span></div>
+            <div class="painel">TEMPO: <span id="cronometro">00:00</span></div>
+        </div>
+        <button class="btn-controle" id="btnDir">➡️</button>
+    </div>
+
+    <audio id="somMotor" src="assets/motor.mp3" loop></audio>
+    <audio id="somMoeda" src="assets/moeda.mp3"></audio>
+    <audio id="somExplosao" src="assets/explosao.mp3"></audio>
+    <audio id="musicaFundo" src="assets/musica.mp3" loop></audio>
+    <audio id="somTiro" src="assets/tiro.mp3"></audio>
+
+    <a href="index.html" class="btn-home-floating" title="Voltar ao Início">
+        <span class="icon">🏠</span>
+        <span class="text">INÍCIO</span>
+    </a>
+
+    <script>
+const nave = document.getElementById("nave");
+const campo = document.querySelector(".campo");
+const placar = document.getElementById("placar");
+const cronometroDisplay = document.getElementById("cronometro");
+const telaGameOver = document.getElementById("telaGameOver");
+const telaInicio = document.getElementById("telaInicio");
+const telaVitoria = document.getElementById("telaVitoria");
+const tempoFinal = document.getElementById("tempoFinal");
+
+const sons = {
+    motor: document.getElementById("somMotor"),
+    moeda: document.getElementById("somMoeda"),
+    explosao: document.getElementById("somExplosao"),
+    musica: document.getElementById("musicaFundo"),
+    tiro: document.getElementById("somTiro")
+};
+
+let tiros = [], obstaculos = [], pontos = 0, posicaoX = 50;
+let jogoAtivo = false, faseAtual = 1, segundos = 0, intervaloTempo;
+let framesObs = 0, framesTiro = 0, controles = { esquerda: false, direita: false };
+
+const config = {
+    1: { obj: 20, vel: 3, freq: 45, bg: "" },
+    2: { obj: 50, vel: 4.5, freq: 35, bg: "fase-bg-2" },
+    3: { obj: 100, vel: 6, freq: 25, bg: "fase-bg-3" },
+    4: { obj: 200, vel: 8, freq: 20, bg: "fase-bg-4" } 
+};
+
+// --- ADIÇÃO DO SUPORTE AO TECLADO ---
+window.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft" || e.key.toLowerCase() === "a") controles.esquerda = true;
+    if (e.key === "ArrowRight" || e.key.toLowerCase() === "d") controles.direita = true;
+});
+
+window.addEventListener("keyup", (e) => {
+    if (e.key === "ArrowLeft" || e.key.toLowerCase() === "a") controles.esquerda = false;
+    if (e.key === "ArrowRight" || e.key.toLowerCase() === "d") controles.direita = false;
+});
+
+function começarJogo() {
+    // Tenta tocar música no início para destravar áudio no navegador
+    if(sons.musica) sons.musica.play().catch(e => console.log("Áudio aguardando interação"));
+    
+    document.querySelectorAll('.obs, .tiro, .flash-fase').forEach(el => el.remove());
+    tiros = []; obstaculos = []; pontos = 0; segundos = 0; faseAtual = 1;
+    posicaoX = 50;
+    placar.innerText = "0";
+    cronometroDisplay.innerText = "00:00";
+    
+    telaInicio.style.display = "none";
+    telaVitoria.style.display = "none";
+    telaGameOver.style.display = "none";
+    campo.className = "campo";
+    campo.classList.remove("campo-pausado");
+
+    try {
+        if (sons.motor) { sons.motor.currentTime = 0; sons.motor.play().catch(() => {}); }
+        if (sons.musica) { sons.musica.currentTime = 0; sons.musica.play().catch(() => {}); }
+    } catch(e) {}
+
+    jogoAtivo = true;
+    clearInterval(intervaloTempo);
+    intervaloTempo = setInterval(() => {
+        if(jogoAtivo) {
+            segundos++;
+            let m = Math.floor(segundos/60).toString().padStart(2,'0');
+            let s = (segundos%60).toString().padStart(2,'0');
+            cronometroDisplay.innerText = `${m}:${s}`;
+        }
+    }, 1000);
+    update();
+}
+
+function update() {
+    if (!jogoAtivo) return;
+
+    if (faseAtual < 4 && pontos >= config[faseAtual].obj) {
+        faseAtual++;
+        campo.classList.add(config[faseAtual].bg);
+        const flash = document.createElement("div");
+        flash.className = "flash-fase";
+        campo.appendChild(flash);
+        setTimeout(() => flash.remove(), 500);
+    }
+
+    if (pontos >= 200) { vencerJogo(); return; }
+
+    if (controles.esquerda && posicaoX > 5) posicaoX -= 1.5;
+    if (controles.direita && posicaoX < 95) posicaoX += 1.5;
+    nave.style.left = posicaoX + "%";
+    nave.className = controles.esquerda ? "inclinado-esq" : (controles.direita ? "inclinado-dir" : "");
+
+    if (--framesTiro <= 0) {
+        const tDiv = document.createElement("div");
+        tDiv.className = "tiro";
+        campo.appendChild(tDiv);
+        const nRect = nave.getBoundingClientRect();
+        const cRect = campo.getBoundingClientRect();
+        tiros.push({ el: tDiv, y: nRect.top - cRect.top, x: nRect.left - cRect.left + 38 });
+        framesTiro = 25;
+        if(sons.tiro) { sons.tiro.currentTime = 0; sons.tiro.volume = 0.1; sons.tiro.play().catch(()=>{}); }
+    }
+
+    for (let i = tiros.length - 1; i >= 0; i--) {
+        let t = tiros[i];
+        t.y -= 10;
+        t.el.style.top = t.y + "px";
+        t.el.style.left = t.x + "px";
+        if (t.y < -20) { t.el.remove(); tiros.splice(i, 1); }
+    }
+
+    if (--framesObs <= 0) {
+        const ehInimigo = Math.random() > 0.4;
+        const oDiv = document.createElement("div");
+        oDiv.className = ehInimigo ? "obs missil" : "obs ponto-positivo";
+        campo.appendChild(oDiv);
+        const x = Math.random() * (campo.offsetWidth - 50);
+        obstaculos.push({ el: oDiv, y: -50, x: x, vel: config[faseAtual].vel, tipo: ehInimigo ? 'i' : 'p' });
+        framesObs = config[faseAtual].freq;
+    }
+
+    const nRect = nave.getBoundingClientRect();
+
+    for (let i = obstaculos.length - 1; i >= 0; i--) {
+        let o = obstaculos[i];
+        o.y += o.vel;
+        o.el.style.top = o.y + "px";
+        o.el.style.left = o.x + "px";
+        const oRect = o.el.getBoundingClientRect();
+
+        let removido = false;
+        for (let ti = tiros.length - 1; ti >= 0; ti--) {
+            let t = tiros[ti];
+            const tRect = t.el.getBoundingClientRect();
+            if (o.tipo === 'i' && !(tRect.right < oRect.left || tRect.left > oRect.right || tRect.bottom < oRect.top || tRect.top > oRect.bottom)) {
+                pontos += 2;
+                placar.innerText = pontos;
+                o.el.remove(); obstaculos.splice(i, 1);
+                t.el.remove(); tiros.splice(ti, 1);
+                if(sons.explosao) { sons.explosao.currentTime = 0; sons.explosao.play().catch(()=>{}); }
+                removido = true; break;
+            }
+        }
+        if (removido) continue;
+
+        if (!(nRect.right < oRect.left || nRect.left > oRect.right || nRect.bottom < oRect.top || nRect.top > oRect.bottom)) {
+            if (o.tipo === 'i') {
+                pontos -= 5;
+                if(sons.explosao) { sons.explosao.currentTime = 0; sons.explosao.play().catch(()=>{}); }
+            } else {
+                pontos += 1;
+                if(sons.moeda) { sons.moeda.currentTime = 0; sons.moeda.play().catch(()=>{}); }
+            }
+            placar.innerText = pontos;
+            o.el.remove(); obstaculos.splice(i, 1);
+            if (pontos < 0) { gameOver(); return; }
+            continue;
+        }
+
+        if (o.y > campo.offsetHeight + 50) { o.el.remove(); obstaculos.splice(i, 1); }
+    }
+    requestAnimationFrame(update);
+}
+
+function vencerJogo() {
+    jogoAtivo = false;
+    clearInterval(intervaloTempo);
+    tempoFinal.innerText = cronometroDisplay.innerText;
+    telaVitoria.style.display = "block";
+    campo.classList.add("campo-pausado");
+    if(sons.motor) sons.motor.pause();
+    
+    setTimeout(() => {
+        if(confirm("Deseja abrir o convite oficial agora?")) {
+            window.location.href = "convite.html"; 
+        }
+    }, 2000);
+}
+
+function gameOver() {
+    jogoAtivo = false;
+    clearInterval(intervaloTempo);
+    telaGameOver.style.display = "block";
+    campo.classList.add("campo-pausado");
+    if(sons.motor) sons.motor.pause();
+}
+
+function reiniciarJogo() { location.reload(); }
+
+const setBtn = (id, dir) => {
+    const b = document.getElementById(id);
+    if(!b) return;
+    b.onmousedown = b.ontouchstart = (e) => { e.preventDefault(); controles[dir] = true; };
+    b.onmouseup = b.ontouchend = b.onmouseleave = () => controles[dir] = false;
+};
+setBtn('btnEsq', 'esquerda'); setBtn('btnDir', 'direita');
+
+    </script>
+</body>
+</html>

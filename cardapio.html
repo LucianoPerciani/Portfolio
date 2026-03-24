@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Bar Banana - Cardápio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding-top: 140px; /* Ajustado para dar espaço ao header fixo */
+      background: #E3EA86;
+    }
+
+    /* HEADER */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: #ffcc00;
+      display: flex;
+      justify-content: space-between;
+      align-items: center; /* Alinha logo e carrinho verticalmente */
+      padding: 10px 20px;
+      z-index: 1000;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .logo {
+      height: 80px; /* Reduzi para não ocupar a tela toda */
+      width: auto;
+    }
+
+    /* CARRINHO */
+    .carrinho {
+      background: #EEE881;
+      padding: 10px;
+      border-radius: 10px;
+      width: 250px;
+      max-height: 110px; /* Altura compacta inicial */
+      overflow-y: auto;
+      font-size: 13px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: max-height 0.3s ease;
+    }
+
+    /* Expandir carrinho se tiver itens (opcional via JS ou manter fixo) */
+    .carrinho:hover {
+      max-height: 400px;
+    }
+
+    .carrinho h4 {
+      margin: 0 0 5px 0;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .carrinho ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .carrinho li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      padding: 3px 0;
+      border-bottom: 1px dashed #ccc;
+    }
+
+    .carrinho li button {
+      background: #dc3545;
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    #btnEnviar {
+      width: 100%;
+      margin-top: 5px;
+      background: #25d366;
+      color: white;
+      border: none;
+      padding: 5px;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* CONTEÚDO */
+    .conteudo {
+      padding: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .categoria {
+      margin-top: 20px;
+      border-left: 5px solid #ffcc00;
+      padding-left: 10px;
+    }
+
+    /* GRID */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .item {
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .item img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .preco {
+      font-weight: bold;
+      color: #28a745;
+    }
+
+    button.add-btn {
+      background: #28a745;
+      color: #fff;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    /* MODAL */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    .modal-conteudo {
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .modal-conteudo input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    /* RESPONSIVIDADE */
+    @media (max-width: 768px) {
+      .menu-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .header {
+        padding: 5px 10px;
+      }
+      .logo { height: 50px; }
+      .carrinho { width: 150px; font-size: 11px; }
+      .menu-grid { grid-template-columns: 1fr; }
+      body { padding-top: 100px; }
+    }
+
+    /* BOTÃO FLUTUANTE */
+    .btn-home-floating {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        border: 1px solid #00d4ff;
+        color: #00d4ff;
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: bold;
+        z-index: 9999;
+        transition: 0.3s;
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="header">
+  <img src="/assets/logo2.png" alt="Bar Banana" class="logo">
+
+  <div class="carrinho">
+    <h4>🛒 Pedido</h4>
+    <ul id="listaPedido"></ul>
+    <p style="margin:5px 0; font-weight:bold;">Total: R$ <span id="total">0.00</span></p>
+    <button id="btnEnviar">Enviar</button>
+  </div>
+</header>
+
+<main class="conteudo">
+  <h2 class="categoria">🍽️ Prato do Dia & Marmitas</h2>
+  <div class="menu-grid">
+    <div class="item">
+      <img src="/assets/prato-dia.jpg">
+      <h3>Prato do Dia</h3>
+      <p>Arroz, Feijão, Bife, Batata e Salada</p>
+      <p class="preco">R$ 18,00</p>
+      <button class="add-btn" onclick="adicionarAoCarrinho('Prato do Dia', 18.00)">Adicionar</button>
+    </div>
+    <div class="item">
+      <img src="/assets/marmita-m.jpg">
+      <h3>Marmita M</h3>
+      <p class="preco">R$ 16,00</p>
+      <button class="add-btn" onclick="adicionarAoCarrinho('Marmita M', 16.00)">Adicionar</button>
+    </div>
+    <div class="item">
+      <img src="/assets/marmita-g.jpg">
+      <h3>Marmita G</h3>
+      <p class="preco">R$ 20.00</p>
+      <button class="add-btn" onclick="adicionarAoCarrinho('Marmita G', 20.00)">Adicionar</button>
+    </div>
+  </div>
+
+  <h2 class="categoria">🥤 Bebidas</h2>
+  <div class="menu-grid">
+    <div class="item"><img src="/assets/coca-lata.jpg"><h3>Coca Lata</h3><p class="preco">R$ 6,00</p><button class="add-btn" onclick="adicionarAoCarrinho('Coca Lata', 6.00)">Adicionar</button></div>
+    <div class="item"><img src="/assets/fanta-lata.jpg"><h3>Fanta Lata</h3><p class="preco">R$ 6,00</p><button class="add-btn" onclick="adicionarAoCarrinho('Fanta Lata', 6.00)">Adicionar</button></div>
+    <div class="item"><img src="/assets/coca-2l.jpg"><h3>Coca 2L</h3><p class="preco">R$ 13,00</p><button class="add-btn" onclick="adicionarAoCarrinho('Coca 2L', 13.00)">Adicionar</button></div>
+  </div>
+
+  </main>
+
+<div id="modalCliente" class="modal">
+  <div class="modal-conteudo">
+    <h3>📦 Dados para Entrega</h3>
+    <input type="text" id="nomeCliente" placeholder="Seu Nome">
+    <input type="text" id="enderecoCliente" placeholder="Endereço Completo">
+    <button id="btnEnviar" onclick="enviarPedido()">Confirmar no WhatsApp</button>
+    <button style="background:#666; width:100%; border:none; color:#fff; padding:5px; margin-top:5px; border-radius:4px;" onclick="document.getElementById('modalCliente').style.display='none'">Cancelar</button>
+  </div>
+</div>
+
+<a href="index.html" class="btn-home-floating">
+    <span>🏠</span> <span>INÍCIO</span>
+</a>
+
+<script>
+let pedido = [];
+let total = 0;
+
+function adicionarAoCarrinho(nome, preco) {
+  pedido.push({ nome, preco });
+  total += preco;
+  atualizarCarrinho();
+}
+
+function atualizarCarrinho() {
+  const lista = document.getElementById("listaPedido");
+  const totalSpan = document.getElementById("total");
+  lista.innerHTML = "";
+  
+  pedido.forEach((item, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span>${item.nome}</span> <button onclick="removerItem(${index})">×</button>`;
+    lista.appendChild(li);
+  });
+  totalSpan.textContent = total.toFixed(2);
+}
+
+function removerItem(index) {
+  total -= pedido[index].preco;
+  pedido.splice(index, 1);
+  atualizarCarrinho();
+}
+
+document.getElementById("btnEnviar").onclick = function() {
+  if (pedido.length === 0) return alert("Carrinho vazio!");
+  document.getElementById("modalCliente").style.display = "flex";
+};
+
+function enviarPedido() {
+  const nome = document.getElementById("nomeCliente").value;
+  const endereco = document.getElementById("enderecoCliente").value;
+  
+  if (!nome || !endereco) return alert("Preencha os dados!");
+  
+  let msg = `*Pedido Bar Banana*\n\n*Cliente:* ${nome}\n*Endereço:* ${endereco}\n\n`;
+  pedido.forEach(i => msg += `• ${i.nome} - R$ ${i.preco.toFixed(2)}\n`);
+  msg += `\n*Total: R$ ${total.toFixed(2)}*`;
+  
+  window.open(`https://wa.me/5519999859655?text=${encodeURIComponent(msg)}`, "_blank");
+  
+  pedido = []; total = 0;
+  atualizarCarrinho();
+  document.getElementById("modalCliente").style.display = "none";
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Estilo - Estética Automotiva</title>
+    <style>
+        :root {
+    --vermelho: #e74c3c;
+    --preto: #0a0a0a;
+    --cinza: #1a1a1a;
+    --branco: #eeeeee;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+body { background: var(--preto); color: var(--branco); line-height: 1.6; overflow-x: hidden; }
+
+/* Header */
+header { background: #000; padding: 20px; text-align: center; border-bottom: 4px solid var(--vermelho); }
+.main-logo { max-width: 200px; height: auto; transition: 0.3s; }
+.slogan { color: var(--vermelho); font-weight: bold; font-size: 0.7rem; letter-spacing: 2px; margin-top: 10px; text-transform: uppercase;}
+
+/* Heros */
+.hero, .hero-interno {
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    background-size: cover; background-position: center; background-repeat: no-repeat;
+    position: relative;
+}
+.hero { height: 500px; background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('assets/logo1.jpeg'); }
+.hero-interno { height: 40vh; min-height: 300px; border-bottom: 3px solid var(--vermelho); }
+.hero-content h2 { font-size: 2.5rem; text-transform: uppercase; }
+
+/* Grid e Container */
+.container { max-width: 1000px; margin: auto; padding: 40px 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+
+/* Cards */
+.card { background: var(--cinza); padding: 30px; border-radius: 15px; text-align: center; border: 1px solid #333; transition: 0.4s; }
+.card:hover { border-color: var(--vermelho); transform: translateY(-10px); }
+.card h3, .card h4 { color: var(--vermelho); margin-bottom: 10px; }
+.icon { font-size: 2.5rem; display: block; margin-bottom: 15px; }
+.card-link { text-decoration: none; color: inherit; }
+.saiba-mais { color: var(--vermelho); font-weight: bold; margin-top: 15px; display: block; }
+
+/* Menu Leque */
+.menu-leque { position: fixed; bottom: 30px; right: 30px; z-index: 9999; }
+.menu-toggle { 
+    width: 60px; height: 60px; background: var(--vermelho); border-radius: 50%; 
+    display: flex; justify-content: center; align-items: center; cursor: pointer; 
+    color: white; font-size: 1.5rem; transition: 0.5s; position: relative; z-index: 10;
+}
+.menu-leque.active .menu-toggle { transform: rotate(135deg); }
+.menu-itens { position: absolute; bottom: 0; right: 0; list-style: none; }
+.menu-itens li { position: absolute; bottom: 10px; right: 10px; transition: 0.5s; opacity: 0; pointer-events: none; }
+.menu-leque.active .menu-itens li { opacity: 1; pointer-events: auto; }
+
+/* Posições das bolinhas do menu */
+.menu-leque.active li:nth-child(1) { transform: translate(-80px, 0); }
+.menu-leque.active li:nth-child(2) { transform: translate(-65px, -65px); }
+.menu-leque.active li:nth-child(3) { transform: translate(0, -80px); }
+.menu-leque.active li:nth-child(4) { transform: translate(-130px, 0); }
+.menu-leque.active li:nth-child(5) { transform: translate(0, -130px); }
+
+.menu-itens li a { 
+    width: 45px; height: 45px; background: white; color: black;
+    display: flex; justify-content: center; align-items: center; 
+    border-radius: 50%; text-decoration: none; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+/* Pagina de Serviço */
+.conteudo-detalhado h3 { color: var(--vermelho); margin-bottom: 20px; font-size: 2rem; }
+.conteudo-detalhado ul { list-style: none; margin: 20px 0; }
+.conteudo-detalhado li { padding: 10px 0 10px 30px; position: relative; border-bottom: 1px solid #222; }
+.conteudo-detalhado li::before { content: "✓"; position: absolute; left: 0; color: var(--vermelho); font-weight: bold; }
+.btn-whatsapp { display: inline-block; background: #25d366; color: white; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: bold; transition: 0.3s; }
+.cta-voltar { margin-top: 30px; text-align: center; }
+.cta-voltar a { color: #888; text-decoration: none; }
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    /* Garante que o link ocupe todo o card */
+}
+
+.titulo-secao span {
+    color: var(--vermelho);
+}
+    </style>
+</head>
+<body>
+    
+    <nav class="menu-leque" id="menuLeque">
+        <div class="menu-toggle"><span>+</span></div>
+        
+        
+        
+        
+<ul class="menu-itens">
+    <li style="--i:0;"><a href="estetica.html" title="Início">🏠</a></li> 
+    <li style="--i:1;"><a href="SEU_INSTAGRAM_AQUI" target="_blank" title="Instagram">📸</a></li> 
+    <li style="--i:2;"><a href="estetica.html#servicos" title="Serviços">🧼</a></li> 
+<li style="--i:3;"><a href="fachada.html" title="Como Chegar">📍</a></li> 
+    
+    <li style="--i:4;"><a href="https://wa.me/19999859655" target="_blank" title="WhatsApp">💬</a></li> 
+</ul>
+
+    </nav> 
+
+    <header>
+        <div class="logo-container">
+            <img src="assets/logo.jpeg" alt="Logo Auto Estilo" class="main-logo">
+        </div>
+        <p class="slogan">O cuidado que seu veículo merece</p>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Transformação e Proteção</h2>
+            <p>Especialistas em Estética Automotiva de Alto Padrão</p>
+            <a href="https://wa.me/19999859655" class="btn-whatsapp">🚀 Agendar via WhatsApp</a>
+        </div>
+    </section> 
+
+    <section class="diferenciais">
+        <div class="container grid-3">
+            <div class="card">
+                <span class="icon">🏆</span>
+                <h4>Produtos Premium</h4>
+                <p>Marcas líderes mundiais.</p>
+            </div>
+            <div class="card">
+                <span class="icon">⏱️</span>
+                <h4>Entrega Pontual</h4>
+                <p>Respeitamos seu tempo.</p>
+            </div>
+            <div class="card">
+                <span class="icon">🛡️</span>
+                <h4>Garantia</h4>
+                <p>Certificado de proteção.</p>
+            </div>
+        </div>
+    </section> 
+
+    <main id="servicos" class="container">
+        <h2 class="titulo-secao" style="text-align: center; margin-bottom: 30px; text-transform: uppercase;">Nossos <span>Serviços</span></h2>
+        
+        <div class="grid-3">
+            <a href="servico-higienizacao.html" class="card-link">
+                <div class="card">
+                    <span class="icon">🧽</span>
+                    <h3>Higienização Técnica</h3>
+                    <p>Saúde, conforto e renovação interna.</p>
+                    <span class="saiba-mais">🔍 Ver detalhes</span>
+                </div>
+            </a>
+
+            <a href="servico-polimento.html" class="card-link">
+                <div class="card">
+                    <span class="icon">✨</span>
+                    <h3>Polimento Estético</h3>
+                    <p>Restauração total do brilho e pintura.</p>
+                    <span class="saiba-mais">🔍 Ver detalhes</span>
+                </div>
+            </a>
+
+            <a href="servico-ar.html" class="card-link">
+                <div class="card">
+                    <span class="icon">❄️</span>
+                    <h3>Ar Condicionado</h3>
+                    <p> Saúde. Elimina fungos, bactérias e odores.</p>
+                    <span class="saiba-mais">🔍 Ver detalhes</span>
+                </div>
+            </a>
+            
+            <a href="servico-limpeza.html" class="card-link">
+                <div class="card">
+                    <span class="icon">🚿</span>
+                    <h3>Limpeza Técnica</h3>
+                    <p>Lavagem detalhada em cada detalhe.</p>
+                    <span class="saiba-mais">🔍 Ver detalhes</span>
+                </div>
+            </a>
+            <a href="farois.html" class="card-link">
+    <div class="card">
+        <span class="icon">💡</span>
+        <h3>Revitalização de Faróis</h3>
+        <p>Segurança, clareza e transparência original.</p>
+        <span class="saiba-mais">🔍 Ver detalhes</span>
+    </div>
+</a>
+<a href="servico-vidros.html" class="card-link">
+    <div class="card">
+        <span class="icon">💎</span>
+        <h3>Cristalização de Vidros</h3>
+        <p>Visibilidade total e repelência à chuva.</p>
+        <span class="saiba-mais">🔍 Ver detalhes</span>
+    </div>
+</a>
+<a href="servico-plasticos.html" class="card-link">
+    <div class="card">
+        <span class="icon">🏎️</span>
+        <h3>Revitalização de Plásticos</h3>
+        <p>Proteção contra o sol e aspecto de carro novo.</p>
+        <span class="saiba-mais">🔍 Ver detalhes</span>
+    </div>
+</a>
+<a href="servico-ppf.html" class="card-link">
+    <div class="card">
+        <span class="icon">🛡️</span>
+        <h3>Aplicação de PPF</h3>
+        <p>A proteção invisível definitiva contra riscos e pedradas.</p>
+        <span class="saiba-mais">🔍 Ver detalhes</span>
+    </div>
+</a>
+<a href="servico-motor.html" class="card-link">
+    <div class="card">
+        <span class="icon">⚙️</span>
+        <h3>Limpeza de Motor</h3>
+        <p>Estética e preservação com segurança total.</p>
+        <span class="saiba-mais">🔍 Ver detalhes</span>
+    </div>
+</a>
+        </div>
+    </main>
+
+    <script>
+        const menuLeque = document.getElementById('menuLeque');
+
+if (menuLeque) {
+  menuLeque.addEventListener('click', (e) => {
+    menuLeque.classList.toggle('active');
+    e.stopPropagation();
+  });
+  
+  // Fechar menu ao clicar em qualquer lugar da tela
+  document.addEventListener('click', () => {
+    menuLeque.classList.remove('active');
+  });
+}
+
+// Revelar elementos ao rolar (Animação suave)
+const cards = document.querySelectorAll('.card');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+cards.forEach(card => {
+  card.style.opacity = '0';
+  card.style.transform = 'translateY(30px)';
+  card.style.transition = 'all 0.6s ease-out';
+  observer.observe(card);
+});
+    </script>
+    <a href="index.html" class="btn-voltar">Voltar ao Cubo</a>
+</body>
+</html>

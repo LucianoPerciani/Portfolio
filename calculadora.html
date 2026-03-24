@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora de IMC</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; }
+        .card { border: 1px solid #ccc; padding: 20px; border-radius: 8px; width: 300px; }
+        input { width: 100%; margin: 10px 0; padding: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background-color: #28a745; color: white; border: none; cursor: pointer; }
+        #resultado { margin-top: 20px; font-weight: bold; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Calculadora IMC</h2>
+    <label for="peso">Peso (kg):</label>
+    <input type="number" id="peso" placeholder="Ex: 75.5">
+    
+    <label for="altura">Altura (m):</label>
+    <input type="number" id="altura" placeholder="Ex: 1.75" step="0.01">
+    
+    <button onclick="calcularIMC()">Calcular</button>
+
+    <div id="resultado"></div>
+</div>
+
+<script>
+function calcularIMC() {
+    const peso = parseFloat(document.getElementById('peso').value);
+    const altura = parseFloat(document.getElementById('altura').value);
+    const resultado = document.getElementById('resultado');
+
+    if (peso > 0 && altura > 0) {
+        const imc = (peso / (altura * altura)).toFixed(2);
+        let classificacao = '';
+
+        if (imc < 18.5) classificacao = 'Abaixo do peso';
+        else if (imc < 25) classificacao = 'Peso normal';
+        else if (imc < 30) classificacao = 'Sobrepeso';
+        else classificacao = 'Obesidade';
+
+        resultado.innerHTML = `Seu IMC é ${imc} <br> (${classificacao})`;
+        resultado.style.color = imc >= 18.5 && imc < 25 ? "#28a745" : "#dc3545";
+    } else {
+        resultado.innerHTML = "Preencha os valores corretamente!";
+    }
+}
+
+</script>
+<a href="index.html" class="btn-home-floating" title="Voltar ao Início">
+    <span class="icon">🏠</span>
+    <span class="text">INÍCIO</span>
+</a>
+
+<style>
+    .btn-home-floating {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        border: 1px solid #00d4ff; /* Cor azul neon do seu cubo */
+        color: #00d4ff;
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 0.8rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+        z-index: 9999;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        backdrop-filter: blur(5px);
+    }
+
+    .btn-home-floating:hover {
+        background: #00d4ff;
+        color: #000;
+        box-shadow: 0 0 25px #00d4ff;
+        transform: scale(1.05);
+    }
+
+    .btn-home-floating .icon {
+        font-size: 1.1rem;
+    }
+
+    /* Esconde o texto no celular para ficar mais discreto, mantendo só o ícone */
+    @media (max-width: 600px) {
+        .btn-home-floating .text {
+            display: none;
+        }
+        .btn-home-floating {
+            padding: 12px;
+            bottom: 15px;
+            right: 15px;
+        }
+    }
+</style>
+ <a href="index.html" class="btn-voltar">Voltar ao Cubo</a>
+
+</body>
+</html>

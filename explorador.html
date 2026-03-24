@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Explorador Estelar | NASA API</title>
+    <style>
+        body { 
+            margin: 0; height: 100vh; background: #000; color: white;
+            font-family: 'Segoe UI', sans-serif; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: flex-end;
+        }
+
+        /* Camada de Fundo */
+        #bg-nasa {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            z-index: -1; transition: 1.5s ease-in-out;
+            /* Imagem reserva de alta qualidade caso a NASA falhe */
+            background-image: url('https://images.unsplash.com/photo-1464802686167-b939a67a06a1?q=80&w=2048&auto=format&fit=crop');
+        }
+
+        .info-container {
+            background: rgba(0, 0, 0, 0.85);
+            padding: 30px; border-top: 3px solid #00d4ff;
+            backdrop-filter: blur(15px); max-height: 45vh; overflow-y: auto;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        h1 { color: #00d4ff; text-transform: uppercase; letter-spacing: 2px; margin: 0; font-size: clamp(1.2rem, 5vw, 1.8rem); }
+        p { line-height: 1.6; color: #ddd; font-size: 1rem; margin-top: 15px; }
+        
+        .controles {
+            position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 100;
+        }
+
+        .btn {
+            background: rgba(0,0,0,0.7); color: #00d4ff; border: 1px solid #00d4ff;
+            padding: 10px 18px; cursor: pointer; text-decoration: none;
+            border-radius: 5px; font-weight: bold; font-size: 0.8rem;
+            transition: 0.3s; text-transform: uppercase;
+        }
+
+        .btn:hover { background: #00d4ff; color: #000; box-shadow: 0 0 15px #00d4ff; }
+
+        #google_translate_element { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="bg-nasa"></div>
+
+    <div class="controles">
+        <button class="btn" onclick="traduzirPagina()">🇧🇷 TRADUZIR</button>
+        <a href="index.html" class="btn">🏠 VOLTAR</a>
+    </div>
+
+    <div class="info-container">
+        <h1 id="titulo">Sincronizando com Satélites...</h1>
+        <p id="descricao">Aguardando resposta dos servidores da NASA em Washington.</p>
+        <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+            <small style="color: #00d4ff; font-weight: bold;">[ STATUS: OPERACIONAL ]</small>
+        </div>
+    </div>
+
+    <div id="google_translate_element"></div>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+        }
+
+        function traduzirPagina() {
+            const select = document.querySelector('.goog-te-combo');
+            if (select) {
+                select.value = 'pt';
+                select.dispatchEvent(new Event('change'));
+            } else {
+                alert("O tradutor está se conectando. Aguarde um instante.");
+            }
+        }
+
+        async function buscarDados() {
+            // Timeout de 4 segundos para a NASA (se demorar mais que isso, usa o backup)
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+            try {
+                const res = await fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY', { signal: controller.signal });
+                const data = await res.json();
+                clearTimeout(timeoutId);
+
+                if (data.title) {
+                    document.getElementById('titulo').innerText = data.title;
+                    document.getElementById('descricao').innerText = data.explanation;
+                    
+                    if (data.media_type === 'image') {
+                        // Tenta carregar a imagem HD da NASA
+                        const imgUrl = data.hdurl || data.url;
+                        document.getElementById('bg-nasa').style.backgroundImage = `url('${imgUrl}')`;
+                    }
+                }
+            } catch (e) {
+                console.log("Usando imagem de reserva do espaço profundo.");
+                document.getElementById('titulo').innerText = "OBSERVATÓRIO (MODO OFFLINE)";
+                document.getElementById('descricao').innerText = "Não foi possível conectar à API da NASA em tempo real. Exibindo arquivo de imagem estelar fixa para manter a navegação.";
+            }
+        }
+
+        buscarDados();
+    </script>
+</body>
+</html>

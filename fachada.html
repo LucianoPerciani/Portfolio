@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Localização - Auto Estilo</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Ajustes específicos para a página de mapa */
+    .hero-interno {
+      /* Aqui você coloca a foto da FACHADA */
+      background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('foto-da-fachada.jpg');
+      height: 40vh;
+      /* Ajustado para dar destaque à foto sem ocupar a tela toda */
+    }
+    
+    .mapa-container {
+      width: 100%;
+      height: 450px;
+      /* Altura do mapa */
+      margin-bottom: 20px;
+    }
+    
+    .mapa-container iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    
+    .info-contato {
+      text-align: center;
+      padding: 20px;
+      font-size: 1.1rem;
+      color: #333;
+    }
+    
+    .info-contato p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+
+<body>
+  
+  <nav class="menu-leque" id="menuLeque">
+    <div class="menu-toggle"><span>+</span></div>
+    <ul class="menu-itens">
+      <li style="--i:0;"><a href="index.html" title="Início">🏠</a></li>
+      <li style="--i:1;"><a href="SEU_INSTAGRAM_AQUI" target="_blank" title="Instagram">📸</a></li>
+      <li style="--i:2;"><a href="index.html#servicos" title="Serviços">🧼</a></li>
+      <li style="--i:3;"><a href="https://www.google.com/maps/dir/?api=1&destination=Rua+Brasil+37580-000+MG" target="_blank" title="Como Chegar">📍</a></li>
+      
+      <li style="--i:4;"><a href="https://wa.me/19999859655" target="_blank" title="WhatsApp">💬</a></li>
+    </ul>
+  </nav>
+  
+  <header>
+    <div class="logo-container">
+      <img src="logo.jpeg" alt="Logo Auto Estilo" class="main-logo" style="max-width: 120px; margin: 10px auto; display: block;">
+    </div>
+  </header>
+  
+  <section class="hero-interno">
+    <div class="hero-content">
+      <h2>Nossa Localização</h2>
+    </div>
+  </section>
+  
+  <main>
+    <div class="mapa-container">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3688.123456789!2d-46.2373!3d-22.1895!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94cb600000000000%3A0x0!2zUnVhIEJyYXNpbCwgQ29uZ29uaGFsIC0gTUcsIDM3NTgwLTAwMA!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+    
+    <div class="container">
+      <div class="info-contato">
+        <p><strong>Endereço:</strong> Rua Brasil, MG</p>
+        <p><strong>CEP:</strong> 37580-000</p>
+        <p><strong>Telefone:</strong> (Seu Telefone Aqui)</p>
+      </div>
+      
+      <div style="text-align: center; margin-top: 20px;">
+        <a href="https://www.google.com/maps/dir/?api=1&destination=Rua+Brasil+37580-000+MG" target="_blank" class="btn-whatsapp" style="background-color: #4285F4;">Traçar Rota no GPS</a>
+      </div>
+      
+      <div class="cta-voltar" style="padding-top: 30px; padding-bottom: 40px; text-align: center;">
+        <a href="index.html">← Voltar para a página inicial</a>
+      </div>
+    </div>
+  </main>
+  
+  
+  
+  
+  
+  <script src="script.js"></script>
+   <a href="index.html" class="btn-voltar">Voltar ao Cubo</a>
+</body>
+
+</html>

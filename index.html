@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfólio 3D Interativo | Luciano Ribeiro</title>
+    <style>
+        :root {
+            --cube-size: 160px;
+            --bg-color: #050505;
+            --accent-color: #00d4ff;
+            --text-color: #ffffff;
+        } 
+
+        body {
+            margin: 0;
+            height: 100vh;
+            background: var(--bg-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            perspective: 1200px;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            touch-action: none; /* Previne scroll no mobile ao arrastar */
+        }
+
+        header {
+            position: absolute;
+            top: 0; width: 100%; padding: 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-sizing: border-box; z-index: 100;
+        }
+
+        .logo {
+            color: var(--text-color);
+            font-weight: 900; font-size: 1.2rem; letter-spacing: 2px;
+            border-left: 3px solid var(--accent-color); padding-left: 15px;
+            text-transform: uppercase;
+        }
+
+        nav a {
+            color: rgba(255,255,255,0.6); text-decoration: none;
+            margin-left: 25px; font-size: 0.85rem; transition: 0.3s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        nav a:hover { color: var(--accent-color); }
+
+        .main-title {
+            position: absolute; top: 12%; text-align: center;
+            z-index: 20; pointer-events: none; width: 100%;
+        }
+
+        .main-title h1 {
+            color: white; margin: 0; font-size: clamp(2rem, 8vw, 4.5rem);
+            letter-spacing: 15px; text-transform: uppercase; font-weight: 200;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+        }
+
+        .main-title p { color: rgba(255,255,255,0.7); letter-spacing: 5px; margin-top: 10px; text-transform: uppercase; font-size: 0.9rem; }
+
+        /* --- Cubo --- */
+        .scene-main {
+            width: var(--cube-size);
+            height: var(--cube-size);
+            z-index: 10;
+            cursor: grab;
+        }
+
+        .scene-main:active { cursor: grabbing; }
+
+        .cube-main {
+            width: 100%; height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            /* A animação inicial é controlada pelo JS agora para não conflitar */
+            transform: rotateX(-15deg) rotateY(-15deg);
+        } 
+
+        .face {
+            position: absolute; width: var(--cube-size); height: var(--cube-size);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            background: rgba(0, 212, 255, 0.03);
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.8); font-weight: 500;
+            text-decoration: none; backdrop-filter: blur(4px);
+            transition: background 0.4s, box-shadow 0.4s;
+            font-size: 0.8rem; text-transform: uppercase; text-align: center;
+            padding: 10px; box-sizing: border-box;
+            user-select: none;
+            -webkit-user-drag: none;
+        } 
+
+        .face.highlight { border: 2px solid var(--accent-color); background: rgba(0, 212, 255, 0.1); color: #fff; text-shadow: 0 0 10px var(--accent-color); }
+        .face:hover { background: rgba(0, 212, 255, 0.25); box-shadow: inset 0 0 20px rgba(0, 212, 255, 0.5), 0 0 30px var(--accent-color); color: white; } 
+
+        .front  { transform: rotateY(0deg) translateZ(80px); }
+        .back   { transform: rotateY(180deg) translateZ(80px); }
+        .right  { transform: rotateY(90deg) translateZ(80px); }
+        .left   { transform: rotateY(-90deg) translateZ(80px); }
+        .top    { transform: rotateX(90deg) translateZ(80px); }
+        .bottom { transform: rotateX(-90deg) translateZ(80px); } 
+
+        /* --- Background --- */
+        .bg-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform-style: preserve-3d; pointer-events: none; }
+        .mini-cube { position: absolute; width: 15px; height: 15px; transform-style: preserve-3d; }
+        .mini-face { position: absolute; width: 15px; height: 15px; background: rgba(255, 255, 255, 0.03); border: 0.5px solid rgba(255, 255, 255, 0.08); }
+        @keyframes float {
+            0% { transform: translateZ(300px) rotateX(0deg); opacity: 0; }
+            15% { opacity: 0.3; }
+            100% { transform: translateZ(-1500px) rotateX(360deg); opacity: 0; }
+        }
+
+        footer { position: absolute; bottom: 30px; color: rgba(255,255,255,0.3); font-size: 0.7rem; text-align: center; z-index: 20; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">Luciano Ribeiro</div>
+        <nav>
+            <a href="sobre.html">Sobre</a>
+            <a href="https://github.com" target="_blank">GitHub</a>
+            <a href="https://linkedin.com" target="_blank">LinkedIn</a>
+        </nav>
+    </header>
+
+    <div class="main-title">
+        <h1>Portfólio</h1>
+        <p>Luciano Ribeiro</p>
+    </div>
+
+    <div class="bg-container" id="bg"></div> 
+
+    <div class="scene-main" id="scene">
+        <div class="cube-main" id="cube">
+            <a href="jogo.html" class="face front">Jogo Interativo</a>
+            <a href="cardapio.html" class="face back highlight">Cardápio On Line</a>
+            <a href="calculadora.html" class="face right">Cal.I.M.C</a>
+            <a href="estetica.html" class="face left">Site Estetica</a>
+            <a href="explorador.html" class="face top">Mapa Estelar</a>
+            <a href="conclusao.html" class="face bottom">Conclusão</a>
+        </div>
+    </div> 
+
+    <footer>
+        <p>&copy; 2026 • Clique e arraste para girar o cubo • Clique nas faces para navegar</p>
+    </footer>
+
+    <script>
+        // --- Geração do Background ---
+        const bg = document.getElementById('bg');
+        for (let i = 0; i < 60; i++) {
+            const cube = document.createElement('div');
+            cube.className = 'mini-cube';
+            cube.style.left = `${Math.random() * 100}%`;
+            cube.style.top = `${Math.random() * 100}%`;
+            cube.style.animation = `float ${15 + Math.random() * 15}s linear infinite`;
+            cube.style.animationDelay = `-${Math.random() * 20}s`;
+            ['rotateY(0deg)', 'rotateY(180deg)', 'rotateY(90deg)', 'rotateY(-90deg)', 'rotateX(90deg)', 'rotateX(-90deg)'].forEach(t => {
+                const face = document.createElement('div');
+                face.className = 'mini-face';
+                face.style.transform = `${t} translateZ(7.5px)`;
+                cube.appendChild(face);
+            });
+            bg.appendChild(cube);
+        }
+
+        // --- Lógica de Rotação do Cubo (Mouse & Touch) ---
+        const cube = document.getElementById('cube');
+        const scene = document.getElementById('scene');
+        
+        let isDragging = false;
+        let lastMouseX = 0;
+        let lastMouseY = 0;
+        let rotX = -15;
+        let rotY = -15;
+        let autoSpin = true;
+
+        // Função para atualizar a rotação
+        function updateRotation() {
+            if (autoSpin && !isDragging) {
+                rotY += 0.2; // Velocidade do giro automático
+                rotX += 0.1;
+            }
+            cube.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+            requestAnimationFrame(updateRotation);
+        }
+
+        // Eventos de Mouse
+        scene.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            autoSpin = false; // Para o giro automático ao tocar
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            const deltaX = e.clientX - lastMouseX;
+            const deltaY = e.clientY - lastMouseY;
+            
+            rotY += deltaX * 0.5; // Sensibilidade horizontal
+            rotX -= deltaY * 0.5; // Sensibilidade vertical
+            
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Eventos de Touch (Celular)
+        scene.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            autoSpin = false;
+            lastMouseX = e.touches[0].clientX;
+            lastMouseY = e.touches[0].clientY;
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const deltaX = e.touches[0].clientX - lastMouseX;
+            const deltaY = e.touches[0].clientY - lastMouseY;
+            rotY += deltaX * 0.5;
+            rotX -= deltaY * 0.5;
+            lastMouseX = e.touches[0].clientX;
+            lastMouseY = e.touches[0].clientY;
+        });
+
+        window.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        // Inicia o loop de animação
+        updateRotation();
+
+    </script>
+    
+</body>
+</html>
+u
