@@ -1,1 +1,0 @@
-console.log("Agora o arquivo existe e o Node vai rodar!");
