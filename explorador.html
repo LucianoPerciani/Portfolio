@@ -10,12 +10,10 @@
             display: flex; flex-direction: column; justify-content: flex-end;
         }
 
-        /* Camada de Fundo */
         #bg-nasa {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-size: cover; background-position: center;
             z-index: -1; transition: 1.5s ease-in-out;
-            /* Imagem reserva de alta qualidade caso a NASA falhe */
             background-image: url('https://images.unsplash.com/photo-1464802686167-b939a67a06a1?q=80&w=2048&auto=format&fit=crop');
         }
 
@@ -30,7 +28,13 @@
         p { line-height: 1.6; color: #ddd; font-size: 1rem; margin-top: 15px; }
         
         .controles {
-            position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 100;
+            position: fixed; top: 20px; right: 20px; display: flex; gap: 10px; z-index: 100; align-items: center;
+        }
+
+        /* Estilo do Seletor de Data */
+        .input-data {
+            background: rgba(0,0,0,0.7); color: #00d4ff; border: 1px solid #00d4ff;
+            padding: 8px; border-radius: 5px; outline: none; font-family: inherit;
         }
 
         .btn {
@@ -50,15 +54,16 @@
     <div id="bg-nasa"></div>
 
     <div class="controles">
+        <input type="date" id="data-nasa" class="input-data" onchange="buscarDados()">
         <button class="btn" onclick="traduzirPagina()">🇧🇷 TRADUZIR</button>
         <a href="index.html" class="btn">🏠 VOLTAR</a>
     </div>
 
     <div class="info-container">
         <h1 id="titulo">Sincronizando com Satélites...</h1>
-        <p id="descricao">Aguardando resposta dos servidores da NASA em Washington.</p>
+        <p id="descricao">Aguardando resposta dos servidores da NASA.</p>
         <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
-            <small style="color: #00d4ff; font-weight: bold;">[ STATUS: OPERACIONAL ]</small>
+            <small id="status-missao" style="color: #00d4ff; font-weight: bold;">[ STATUS: OPERACIONAL ]</small>
         </div>
     </div>
 
@@ -66,6 +71,9 @@
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <script>
+        // Preencher o input com a data de hoje por padrão
+        document.getElementById('data-nasa').valueAsDate = new Date();
+
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
         }
@@ -76,37 +84,51 @@
                 select.value = 'pt';
                 select.dispatchEvent(new Event('change'));
             } else {
-                alert("O tradutor está se conectando. Aguarde um instante.");
+                alert("O tradutor está carregando...");
             }
         }
 
         async function buscarDados() {
-            // Timeout de 4 segundos para a NASA (se demorar mais que isso, usa o backup)
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 4000);
+            const dataEscolhida = document.getElementById('data-nasa').value;
+            const titulo = document.getElementById('titulo');
+            const descricao = document.getElementById('descricao');
+            const status = document.getElementById('status-missao');
+            
+            // Coloque sua chave aqui:
+            const minhaChave = "AY7ULTaneclC8nljDoUGukXjoPlXDdJV710iVcbw"; 
+            
+            titulo.innerText = "Buscando dados...";
+            status.innerText = "[ STATUS: RECEBENDO DADOS ]";
 
             try {
-                const res = await fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY', { signal: controller.signal });
-                const data = await res.json();
-                clearTimeout(timeoutId);
+                const res = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${minhaChave}&date=${dataEscolhida}`);
+                
+                if (!res.ok) throw new Error("Erro na API");
 
-                if (data.title) {
-                    document.getElementById('titulo').innerText = data.title;
-                    document.getElementById('descricao').innerText = data.explanation;
-                    
-                    if (data.media_type === 'image') {
-                        // Tenta carregar a imagem HD da NASA
-                        const imgUrl = data.hdurl || data.url;
+                const data = await res.json();
+
+                titulo.innerText = data.title;
+                descricao.innerText = data.explanation;
+                status.innerText = "[ STATUS: OPERACIONAL ]";
+                
+                if (data.media_type === 'image') {
+                    const imgUrl = data.hdurl || data.url;
+                    const tempImg = new Image();
+                    tempImg.src = imgUrl;
+                    tempImg.onload = () => {
                         document.getElementById('bg-nasa').style.backgroundImage = `url('${imgUrl}')`;
-                    }
+                    };
+                } else {
+                    descricao.innerText += "\n\n(Atenção: O registro de hoje é um vídeo/interativo e não pode ser exibido como fundo).";
                 }
             } catch (e) {
-                console.log("Usando imagem de reserva do espaço profundo.");
-                document.getElementById('titulo').innerText = "OBSERVATÓRIO (MODO OFFLINE)";
-                document.getElementById('descricao').innerText = "Não foi possível conectar à API da NASA em tempo real. Exibindo arquivo de imagem estelar fixa para manter a navegação.";
+                titulo.innerText = "DATA NÃO ENCONTRADA";
+                descricao.innerText = "A NASA não possui registros para esta data ou o limite da chave foi atingido. Tente outra data!";
+                status.innerText = "[ STATUS: ERRO ]";
             }
         }
 
+        // Inicia a busca ao carregar a página
         buscarDados();
     </script>
 </body>
