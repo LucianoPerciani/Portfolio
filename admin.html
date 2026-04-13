@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Bar Banana 🍌</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; color: #333; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin: 0 auto 25px; max-width: 600px; }
+        h2, h3 { margin-top: 0; color: #e67e22; }
+        label { font-size: 14px; font-weight: bold; display: block; margin-top: 10px; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        button#btnSalvar { background: #e67e22; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; }
+        button#btnSalvar:hover { background: #d35400; }
+        
+        .item-lista { border-bottom: 1px solid #eee; padding: 15px 0; display: flex; justify-content: space-between; align-items: center; }
+        .badge { background: #ffeaa7; padding: 4px 10px; border-radius: 6px; font-size: 11px; text-transform: uppercase; font-weight: bold; color: #d35400; }
+        .btn-delete { background: #ff7675; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Gerenciar Cardápio 🍌</h2>
+        <label>Nome do Produto</label>
+        <input type="text" id="nome" placeholder="Ex: Coxinha de Frango">
+        
+        <label>Descrição</label>
+        <textarea id="descricao" placeholder="Ex: Com catupiry, massa de batata"></textarea>
+        
+        <label>Preço (R$)</label>
+        <input type="number" step="0.01" id="preco" placeholder="Ex: 8.50">
+        
+        <label>Categoria</label>
+        <select id="categoria">
+            <option value="Prato do Dia">Prato do Dia</option>
+            <option value="Marmitas">Marmitas</option>
+            <option value="Bebidas">Bebidas</option>
+            <option value="Salgados Assados">Salgados Assados</option>
+            <option value="Salgados Fritos">Salgados Fritos</option>
+        </select>
+        
+        <label>URL da Imagem</label>
+        <input type="text" id="urlImagem" placeholder="https://link-da-imagem.jpg">
+        
+        <button id="btnSalvar">Salvar no Cardápio</button>
+    </div>
+
+    <div class="card">
+        <h3>Itens Ativos</h3>
+        <div id="listaAdmin">Carregando itens...</div>
+    </div>
+
+    <script type="module">
+        const SENHA_MESTRA = "2026"; 
+
+        if (sessionStorage.getItem('logado') !== 'true') {
+            const tentativa = prompt("Acesso Restrito. Digite a senha:");
+            if (tentativa === SENHA_MESTRA) {
+                sessionStorage.setItem('logado', 'true');
+            } else {
+                alert("Senha incorreta!");
+                window.location.href = "cliente.html";
+            }
+        }
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAYedmTottweHqYOAdaP8_fSKQMQzlKCE8",
+            authDomain: "bar-banana.firebaseapp.com",
+            projectId: "bar-banana",
+            storageBucket: "bar-banana.firebasestorage.app",
+            messagingSenderId: "997738830978",
+            appId: "1:997738830978:web:11bed80db930f523a7e89b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const cardapioRef = collection(db, "cardapio");
+
+        document.getElementById('btnSalvar').addEventListener('click', async () => {
+            const nome = document.getElementById('nome').value;
+            const preco = document.getElementById('preco').value;
+
+            if(!nome || !preco) return alert("Preencha ao menos Nome e Preço!");
+
+            try {
+                await addDoc(cardapioRef, {
+                    nome: nome,
+                    descricao: document.getElementById('descricao').value,
+                    preco: parseFloat(preco),
+                    categoria: document.getElementById('categoria').value,
+                    imagem: document.getElementById('urlImagem').value,
+                    dataAlt: new Date()
+                });
+                alert("✅ Item adicionado!");
+                document.querySelectorAll('input, textarea').forEach(el => el.value = "");
+            } catch (e) { alert("Erro ao salvar: " + e); }
+        });
+
+        onSnapshot(cardapioRef, (snap) => {
+            const lista = document.getElementById('listaAdmin');
+            lista.innerHTML = "";
+            snap.forEach(d => {
+                const i = d.data();
+                lista.innerHTML += `
+                    <div class="item-lista">
+                        <div>
+                            <span class="badge">${i.categoria}</span><br>
+                            <strong>${i.nome}</strong> - R$ ${parseFloat(i.preco).toFixed(2)}
+                        </div>
+                        <button onclick="window.excluir('${d.id}')" class="btn-delete">Excluir</button>
+                    </div>`;
+            });
+        });
+
+        window.excluir = async (id) => {
+            if(confirm("Deseja apagar este item?")) {
+                await deleteDoc(doc(db, "cardapio", id));
+            }
+        };
+    </script>
+</body>
+</html>
